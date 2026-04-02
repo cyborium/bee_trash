@@ -1,12 +1,10 @@
 {
   "domain": "bee_trash",
   "name": "BEE Abfuhrkalender",
-  "description": "Unofficial integration for BEE Emden waste collection schedules. Not affiliated with or endorsed by BEE Emden.",
   "codeowners": ["@cyborium"],
   "config_flow": true,
   "dependencies": [],
   "documentation": "https://github.com/cyborium/bee_trash",
-  "homeassistant": "2024.1.0",
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/cyborium/bee_trash/issues",
   "requirements": ["icalendar>=6.0"],
