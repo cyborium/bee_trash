@@ -85,10 +85,31 @@ class TestParseIcs:
             dates = data["all_dates"]
             assert dates == sorted(dates, key=_parse_ddmmyyyy)
 
-    def test_next_date_is_first(self):
-        result = parse_ics(SAMPLE_ICS, ABFALLARTEN)
-        for abfallart, data in result.items():
-            assert data["next_date"] == data["all_dates"][0]
+    def test_next_date_is_first_upcoming(self):
+        tomorrow = date.today() + timedelta(days=1)
+        next_week = date.today() + timedelta(days=7)
+        ics = f"""BEGIN:VCALENDAR
+VERSION:2.0
+BEGIN:VEVENT
+UID:test_next_1
+DTSTAMP:20251126T153102
+DTSTART;VALUE=DATE:{tomorrow.strftime("%Y%m%d")}
+DTEND;VALUE=DATE:{(tomorrow + timedelta(days=1)).strftime("%Y%m%d")}
+CATEGORIES:Restabfall (Graue Tonne)
+SUMMARY:Grau
+END:VEVENT
+BEGIN:VEVENT
+UID:test_next_2
+DTSTAMP:20251126T153102
+DTSTART;VALUE=DATE:{next_week.strftime("%Y%m%d")}
+DTEND;VALUE=DATE:{(next_week + timedelta(days=1)).strftime("%Y%m%d")}
+CATEGORIES:Restabfall (Graue Tonne)
+SUMMARY:Grau
+END:VEVENT
+END:VCALENDAR
+"""
+        result = parse_ics(ics, ABFALLARTEN)
+        assert result["Restabfall"]["next_date"] == tomorrow.strftime("%d.%m.%Y")
 
     def test_is_tomorrow_false_for_far_future(self):
         result = parse_ics(SAMPLE_ICS, ABFALLARTEN)
@@ -153,7 +174,20 @@ END:VCALENDAR
         assert result == {}
 
     def test_output_shape_matches_coordinator_format(self):
-        result = parse_ics(SAMPLE_ICS, ABFALLARTEN)
+        tomorrow = date.today() + timedelta(days=1)
+        ics = f"""BEGIN:VCALENDAR
+VERSION:2.0
+BEGIN:VEVENT
+UID:test_shape
+DTSTAMP:20251126T153102
+DTSTART;VALUE=DATE:{tomorrow.strftime("%Y%m%d")}
+DTEND;VALUE=DATE:{(tomorrow + timedelta(days=1)).strftime("%Y%m%d")}
+CATEGORIES:Restabfall (Graue Tonne)
+SUMMARY:Grau
+END:VEVENT
+END:VCALENDAR
+"""
+        result = parse_ics(ics, ABFALLARTEN)
         for abfallart, data in result.items():
             assert "next_date" in data
             assert "is_tomorrow" in data
@@ -161,6 +195,72 @@ END:VCALENDAR
             assert isinstance(data["next_date"], str)
             assert isinstance(data["is_tomorrow"], bool)
             assert isinstance(data["all_dates"], list)
+
+    def test_next_date_none_when_all_dates_past(self):
+        # All dates are in the past
+        yesterday = date.today() - timedelta(days=1)
+        two_days_ago = date.today() - timedelta(days=2)
+        ics = f"""BEGIN:VCALENDAR
+VERSION:2.0
+BEGIN:VEVENT
+UID:test_past_1
+DTSTAMP:20251126T153102
+DTSTART;VALUE=DATE:{yesterday.strftime("%Y%m%d")}
+DTEND;VALUE=DATE:{(yesterday + timedelta(days=1)).strftime("%Y%m%d")}
+CATEGORIES:Restabfall (Graue Tonne)
+SUMMARY:Grau
+END:VEVENT
+BEGIN:VEVENT
+UID:test_past_2
+DTSTAMP:20251126T153102
+DTSTART;VALUE=DATE:{two_days_ago.strftime("%Y%m%d")}
+DTEND;VALUE=DATE:{(two_days_ago + timedelta(days=1)).strftime("%Y%m%d")}
+CATEGORIES:Restabfall (Graue Tonne)
+SUMMARY:Grau
+END:VEVENT
+END:VCALENDAR
+"""
+        result = parse_ics(ics, ABFALLARTEN)
+        assert result["Restabfall"]["next_date"] is None
+        assert result["Restabfall"]["is_tomorrow"] is False
+
+    def test_next_date_earliest_future_when_mixed_past_future(self):
+        # Mix of past and future dates
+        yesterday = date.today() - timedelta(days=1)
+        tomorrow = date.today() + timedelta(days=1)
+        next_week = date.today() + timedelta(days=7)
+        ics = f"""BEGIN:VCALENDAR
+VERSION:2.0
+BEGIN:VEVENT
+UID:test_past
+DTSTAMP:20251126T153102
+DTSTART;VALUE=DATE:{yesterday.strftime("%Y%m%d")}
+DTEND;VALUE=DATE:{(yesterday + timedelta(days=1)).strftime("%Y%m%d")}
+CATEGORIES:Restabfall (Graue Tonne)
+SUMMARY:Grau
+END:VEVENT
+BEGIN:VEVENT
+UID:test_future_near
+DTSTAMP:20251126T153102
+DTSTART;VALUE=DATE:{tomorrow.strftime("%Y%m%d")}
+DTEND;VALUE=DATE:{(tomorrow + timedelta(days=1)).strftime("%Y%m%d")}
+CATEGORIES:Restabfall (Graue Tonne)
+SUMMARY:Grau
+END:VEVENT
+BEGIN:VEVENT
+UID:test_future_far
+DTSTAMP:20251126T153102
+DTSTART;VALUE=DATE:{next_week.strftime("%Y%m%d")}
+DTEND;VALUE=DATE:{(next_week + timedelta(days=1)).strftime("%Y%m%d")}
+CATEGORIES:Restabfall (Graue Tonne)
+SUMMARY:Grau
+END:VEVENT
+END:VCALENDAR
+"""
+        result = parse_ics(ics, ABFALLARTEN)
+        # next_date should be tomorrow (the earliest future date)
+        assert result["Restabfall"]["next_date"] == tomorrow.strftime("%d.%m.%Y")
+        assert result["Restabfall"]["is_tomorrow"] is True
 
 
 class TestExtractDate:

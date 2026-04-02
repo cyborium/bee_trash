@@ -44,10 +44,10 @@ def parse_ics(ics_text: str, abfallarten: list[str]) -> dict:
                     }
                 result[abfallart]["all_dates"].append(date_str)
 
+    today = date.today()
     for abfallart, data in result.items():
         data["all_dates"].sort(key=lambda d: _parse_ddmmyyyy(d))
-        today_str = date.today().strftime("%d.%m.%Y")
-        upcoming = [d for d in data["all_dates"] if d >= today_str]
+        upcoming = [d for d in data["all_dates"] if _parse_ddmmyyyy(d) >= today]
         data["next_date"] = upcoming[0] if upcoming else None
         data["is_tomorrow"] = data["next_date"] == tomorrow
 

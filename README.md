@@ -68,7 +68,6 @@ Die Abfuhrdaten werden aus den offiziellen ICS-Kalenderfeeds der BEE Emden bezog
 - **Drei Abfallarten:** Restabfall, Papier und Gelber Sack. Bioabfall wird derzeit nicht unterstützt.
 - **Nur Emden:** Die Integration ist spezifisch für die 17 Stadtbezirke von Emden und funktioniert nicht für andere Städte.
 - **Ein Bezirk pro Einrichtung:** Für mehrere Bezirke muss die Integration mehrfach hinzugefügt werden.
-- **Veraltete Daten in der Diagnose-Ansicht:** Die Geräte-Seite in Home Assistant kann in der Diagnose-Sektion veraltete Abholdaten anzeigen (z. B. Monate zurückliegend). **Dies betrifft nur die Diagnose-Ansicht.** Die tatsächlichen Entitätszustände sind korrekt und können unter **Entwicklungswerkzeuge → Zustände** eingesehen werden. Das ist die maßgebliche Datenquelle für Automationen, Dashboards und alle anderen Auslesungen. Die Ursache liegt vermutlich in der Home Assistant-Frontend-Darstellung von `SensorDeviceClass.DATE`-Entitäten auf der Geräte-Seite. Es handelt sich um ein kosmetisches Anzeige-Problem — die Integration liefert korrekte Daten. Es gibt aktuell keine bestätigte Umgehungslösung.
 
 ## Fehlerbehebung
 
