@@ -1,0 +1,20 @@
+{
+    "title": "BEE Afvalkalender",
+    "config": {
+        "step": {
+            "user": {
+                "title": "Wijk selecteren",
+                "description": "Selecteer uw wijk in Emden.",
+                "data": {
+                    "bezirk": "Wijk"
+                }
+            }
+        },
+        "abort": {
+            "already_configured": "Wijk is al ingesteld"
+        },
+        "error": {
+            "unknown": "Onverwachte fout."
+        }
+    }
+}

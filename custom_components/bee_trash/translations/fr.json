@@ -1,0 +1,20 @@
+{
+    "title": "BEE Calendrier de collecte",
+    "config": {
+        "step": {
+            "user": {
+                "title": "Sélectionner le quartier",
+                "description": "Sélectionnez votre quartier à Emden.",
+                "data": {
+                    "bezirk": "Quartier"
+                }
+            }
+        },
+        "abort": {
+            "already_configured": "Le quartier est déjà configuré"
+        },
+        "error": {
+            "unknown": "Erreur inattendue."
+        }
+    }
+}

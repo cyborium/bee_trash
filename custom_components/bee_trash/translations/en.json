@@ -1,0 +1,20 @@
+{
+    "title": "BEE Collection Calendar",
+    "config": {
+        "step": {
+            "user": {
+                "title": "Select District",
+                "description": "Select your district in Emden.",
+                "data": {
+                    "bezirk": "District"
+                }
+            }
+        },
+        "abort": {
+            "already_configured": "District is already configured"
+        },
+        "error": {
+            "unknown": "Unexpected error."
+        }
+    }
+}

@@ -1,0 +1,20 @@
+{
+    "title": "BEE Abfuhrkalender",
+    "config": {
+        "step": {
+            "user": {
+                "title": "Bezirk auswählen",
+                "description": "Wählen Sie Ihren Bezirk in Emden aus.",
+                "data": {
+                    "bezirk": "Bezirk"
+                }
+            }
+        },
+        "abort": {
+            "already_configured": "Bezirk ist bereits eingerichtet"
+        },
+        "error": {
+            "unknown": "Unerwarteter Fehler."
+        }
+    }
+}
